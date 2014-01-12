@@ -34,6 +34,7 @@ class RedstoneBridgeListener implements Listener {
                 Block target = block.getRelative(direction);
                 // Queue up the bridge's target.
                 plugin.queueDetect(target);
+                
             }
         }
     }
