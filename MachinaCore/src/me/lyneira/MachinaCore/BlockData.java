@@ -450,6 +450,11 @@ public final class BlockData {
         set(Material.ACTIVATOR_RAIL.getId()).copyData(true).attached(true).drillable(true).drillTime(breakTimeMedium);
         
         set(Material.DROPPER.getId()).copyData(true).solid(true).inventory(true);
+        
+        set(Material.LOG.getId()).solid(true).drillable(true).copyData(true).drillTime(breakTimeMedium);
+        set(Material.LOG_2.getId()).solid(true).drillable(true).copyData(true).drillTime(breakTimeMedium);
+        set(Material.LEAVES_2.getId()).solid(true).drillable(true).copyData(true).drillTime(breakTimeFast);
+        
     }
 
     // Private setters to make the initialization look better.
