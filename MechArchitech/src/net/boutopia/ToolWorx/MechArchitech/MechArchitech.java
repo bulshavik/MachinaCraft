@@ -11,46 +11,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-//import java.util.Iterator;
-//import java.util.Set;
-
-
-
-
-
-
-
-
-
-
-
-
 import java.util.Iterator;
 import java.util.Set;
-
-
-
-
-
-
-
-
-
-
-
 import org.bukkit.Location;
 import org.bukkit.Material;
-//import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
-
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
-
-//import org.bukkit.entity.Player;
-//import org.bukkit.util.BlockIterator;
-//import org.bukkit.util.Vector ;
 public final class MechArchitech extends JavaPlugin {
 	ArchitechBlueprint blueprint ;
 	public String CurrentName ; 
@@ -61,7 +30,6 @@ public final class MechArchitech extends JavaPlugin {
 	public Location Drawloc ; 
 	private BlueprintBlock SelectedBlueprintBlock ;
 	private boolean PickBlock ;
-//	static Map<String, Block> ToolBlocks ;
 	static Server server ;
 	public void BlockClicked(Block block){
 		world = block.getWorld() ;
@@ -255,7 +223,14 @@ public final class MechArchitech extends JavaPlugin {
     			
     			rotate(Drawloc,blueprint) ;
 			}
-    		
+
+    		if(args[0].equalsIgnoreCase("SetParam"))
+			{
+    			
+    			SelectedBlueprintBlock.setParam(args[1], args[2]);
+    			 getLogger().info(SelectedBlueprintBlock.getParam(args[1])+"set");
+    			
+			}
     		
 			if(args[0].equalsIgnoreCase("save"))
 			{

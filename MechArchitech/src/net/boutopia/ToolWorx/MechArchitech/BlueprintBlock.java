@@ -56,7 +56,13 @@ BlueprintBlock(Block block,MechArchitech plugin,int x,int y,int z) {
 	public int getZoffset() {
 		return Zoffset;
 	}
+public String getParam(String key){
+	return Params.get(key);
+}
 
+public void setParam(String key,String value){
+	Params.put(key, value);
+}
 	/**
 	 * @param zoffset the zoffset to set
 	 */
