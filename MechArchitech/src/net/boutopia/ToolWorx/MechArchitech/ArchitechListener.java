@@ -18,20 +18,19 @@ public class ArchitechListener implements Listener {
 
 	 @EventHandler
 	    public void onClick(PlayerInteractEvent event) {
-		if (plugin.isPickBlock()){
+		
 			if (event.getPlayer().getItemInHand().getType().equals(Material.STICK)){
 				 plugin.getLogger().info("Pick Block fired ") ;
 				 Block block = event.getClickedBlock() ;
-				 plugin.BlockClicked(block);
-			}
-		}
+				 plugin.SelectBlock(block);
+					}
 		else{
 		 if(event.isBlockInHand()){
 		  plugin.getLogger().info("Event Fired ") ;
 	      Block block = event.getClickedBlock().getRelative(event.getBlockFace()) ;
 	      block.setType(event.getPlayer().getItemInHand().getType());
 	      plugin.getLogger().info("Event Fired " + block.getType().toString());
-	      plugin.BlockClicked(block);
+	      plugin.AddBlock(block);
 	     
 	    }
 	 }}

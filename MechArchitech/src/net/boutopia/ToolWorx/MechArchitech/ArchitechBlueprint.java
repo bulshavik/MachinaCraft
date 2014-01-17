@@ -17,9 +17,9 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	private Map<String, BlueprintBlock> ToolBlocks ;
 	private  String He ; 
 	private Boolean Anchored ; 
-	private int Length ;
-	private int Height ;
-	private int Width ;
+	private double Length ;
+	private double Height ;
+	private double Width ;
 	private transient Location AnchorLocation ; 
 	private transient MechArchitech plugin ;
 	ArchitechBlueprint(MechArchitech plugin)
@@ -30,7 +30,9 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	}
 	public void CalculateDimensions()
 	{
-		int Maxx=0,Maxy=0,Maxz=0,Minx=0,Miny=0,Minz = 0 ;
+		double Maxx=0;
+		double Maxy=0,Maxz=0,Miny=0,Minz = 0 ;
+		double Minx=0;
 		Iterator<String> iterator = ToolBlocks.keySet().iterator();
 		BlueprintBlock blueprintBlock ;
 		while (iterator.hasNext()){
@@ -54,7 +56,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	}
 	public String DimensionString()
 	{
-		return Integer.toString(Length)+"X"+Integer.toString(Height)+"X"+Integer.toString(Width);
+		return Double.toString(Length)+"X"+Double.toString(Height)+"X"+Double.toString(Width);
 	}
 	public void SetBlock(String currentName, Block block) {
 		if (!Anchored) {
@@ -92,7 +94,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	}
 
 	public BlueprintBlock getBlock(String key) {
-				return ToolBlocks.get(key) ; 
+						return ToolBlocks.get(key) ; 
 	
 	}
 	

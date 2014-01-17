@@ -31,10 +31,9 @@ public final class MechArchitech extends JavaPlugin {
 	private BlueprintBlock SelectedBlueprintBlock ;
 	private boolean PickBlock ;
 	static Server server ;
-	public void BlockClicked(Block block){
+	public void AddBlock(Block block){
 		world = block.getWorld() ;
 		
-		if (!PickBlock){
 		if (CurrentName.equals(LastName)){
 		CurrentName = "Block" + Integer.toString(BlockEnum);
 		BlockEnum = BlockEnum +1 ;
@@ -44,10 +43,11 @@ public final class MechArchitech extends JavaPlugin {
 		getLogger().info(blueprint.DimensionString());
 		LastName = CurrentName ;
 		}
-		else
-		{
-			SelectedBlueprintBlock = FindBlock(block,blueprint);
-		}
+		
+	
+	
+	public void SelectBlock(Block block){
+		SelectedBlueprintBlock = FindBlock(block,blueprint);
 	}
 	
 	
@@ -70,16 +70,27 @@ public final class MechArchitech extends JavaPlugin {
 	
 	public BlueprintBlock FindBlock(Block block,ArchitechBlueprint Blueprint)
 	{
-		Location Anchor = Blueprint.GetAnchorLocation() ;
-		Location B ;
+		 getLogger().info("Anchor Location: X" );
+		Location B ;// = Anchor ;
+		BlueprintBlock BlueBlock ;
 		Set<String> keys = Blueprint.getkeySet() ;
 		Iterator<String> iterator = keys.iterator() ;
 		String key ;
-		while (iterator.hasNext()){
-			   key = iterator.next() ;
-			   B = Anchor.add(Blueprint.getBlock(key).getXoffset(),
-					   					Blueprint.getBlock(key).getYoffset(),
-					   					Blueprint.getBlock(key).getZoffset());
+		iterator = keys.iterator() ;
+				while (iterator.hasNext()){
+					key = iterator.next() ;
+					BlueBlock = Blueprint.getBlock(key) ;
+					B = Blueprint.GetAnchorLocation().add(BlueBlock.getXoffset(),
+							   BlueBlock.getYoffset(),
+							   BlueBlock.getZoffset());
+			   			   
+			   getLogger().info(key + ":" + world.getBlockAt(B).toString()+ "\nB:"+ B.toString()) ;
+			   getLogger().info(key +
+					   ":"+
+					   Blueprint.getBlock(key).getMaterial()+
+					   " \nX:" +Integer.toString(Blueprint.getBlock(key).getXoffset()) +
+					   " \nY:"+ Integer.toString(Blueprint.getBlock(key).getYoffset()) +
+					   " \nZ:"+ Integer.toString(Blueprint.getBlock(key).getZoffset())  );
 			   if(world.getBlockAt(B).equals(block)){ 
 				   getLogger().info(key +" selected");
 				   return Blueprint.getBlock(key);
@@ -87,7 +98,8 @@ public final class MechArchitech extends JavaPlugin {
 			   }
 					
 		}
-		   getLogger().info("Block not selected");
+		
+		   getLogger().info(block.toString() +" No Block selected -");
 			
 		return null;
 		
