@@ -13,37 +13,140 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.Set;
-
-
-
-
-
-
-
-
-
-
-
-
-//import org.bukkit.Material;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
-
-//import org.bukkit.entity.Player;
-//import org.bukkit.util.BlockIterator;
-//import org.bukkit.util.Vector ;
 public final class MechArchitech extends JavaPlugin {
 	ArchitechBlueprint blueprint ;
-	static String CurrentName ; 
-	static Block CurrentBlock ;
-//	static Map<String, Block> ToolBlocks ;
+	public String CurrentName ; 
+	public String LastName ;
+	public int BlockEnum ;
+	public Block CurrentBlock ;
+	public World world ;
+	public Location Drawloc ; 
+	private BlueprintBlock SelectedBlueprintBlock ;
+	private boolean PickBlock ;
 	static Server server ;
-	public void BlockClicked(Block block){
-		 getLogger().info(block.toString());
-		 getLogger().info(CurrentName);
-		 blueprint.SetBlock(CurrentName,block);
+	public void AddBlock(Block block){
+		world = block.getWorld() ;
+		
+		
+		if (CurrentName.equals(LastName)){
+		CurrentName = "Block" + Integer.toString(BlockEnum);
+		BlockEnum = BlockEnum +1 ;
+		}
+		blueprint.SetBlock(CurrentName,block);
+		blueprint.CalculateDimensions();
+		getLogger().info(blueprint.DimensionString());
+		LastName = CurrentName ;
+		
+	}
+public void SelectBlock(Block block){
+	SelectedBlueprintBlock = FindBlock(block,blueprint);
+}
+	
+	public void Erase(Location loc,ArchitechBlueprint Blueprint){
+		Block Anchor = world.getBlockAt(loc);
+		Block B ;
+		Anchor.setType(Material.AIR);
+		Set<String> keys = Blueprint.getkeySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   B = Anchor.getRelative(Blueprint.getBlock(key).getXoffset(),
+					   					Blueprint.getBlock(key).getYoffset(),
+					   					Blueprint.getBlock(key).getZoffset());
+			   B.setType(Material.AIR);
+					
+		}
+	}
+	
+	public BlueprintBlock FindBlock(Block block,ArchitechBlueprint Blueprint)
+	{
+		Location Anchor = Blueprint.GetAnchorLocation() ;
+		Location B ;
+		Set<String> keys = Blueprint.getkeySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   B = Anchor.add(Blueprint.getBlock(key).getXoffset(),
+					   					Blueprint.getBlock(key).getYoffset(),
+					   					Blueprint.getBlock(key).getZoffset());
+			   if(world.getBlockAt(B).equals(block)){ 
+				   getLogger().info(key +" selected");
+				   return Blueprint.getBlock(key);
+			   
+			   }
+					
+		}
+		   getLogger().info("Block not selected");
+			
+		return null;
+		
+	}
+	
+	
+	public Boolean detect(Location loc,ArchitechBlueprint Blueprint){
+		Block Anchor = world.getBlockAt(loc);
+		Block B ;
+		if (!Anchor.getType().toString().equals(Blueprint.getBlock("Anchor").getMaterial())) return false ;
+		Set<String> keys = Blueprint.getkeySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   B = Anchor.getRelative(Blueprint.getBlock(key).getXoffset(),
+					   					Blueprint.getBlock(key).getYoffset(),
+					   					Blueprint.getBlock(key).getZoffset());
+			   if (!B.getType().toString().equals(Blueprint.getBlock(key).getMaterial())) return false ;
+							
+		} 
+		return true ;
+	}
+	public void rotate(Location loc,ArchitechBlueprint Blueprint) {
+		Erase(loc,Blueprint) ;
+		Block Anchor = world.getBlockAt(loc);
+		int holding ;
+		Anchor.setType(Material.getMaterial(Blueprint.getBlock("Anchor").getMaterial()));
+		Set<String> keys = Blueprint.getkeySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   holding = Blueprint.getBlock(key).getXoffset() ;
+			   Blueprint.getBlock(key).setXoffset(-Blueprint.getBlock(key).getZoffset());
+			   //if (holding < 0) Blueprint.getBlock(key).setZoffset(-holding); 
+			   //else
+			   Blueprint.getBlock(key).setZoffset(holding); 
+				  
+   
+ 					
+		}
+		
+		Draw(loc,blueprint) ;
+		
+	}
+	public void Draw(Location loc,ArchitechBlueprint Blueprint) {
+		Block Anchor = world.getBlockAt(loc);
+		Block B ;
+		Anchor.setType(Material.getMaterial(Blueprint.getBlock("Anchor").getMaterial()));
+		Set<String> keys = Blueprint.getkeySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   B = Anchor.getRelative(Blueprint.getBlock(key).getXoffset(),
+					   					Blueprint.getBlock(key).getYoffset(),
+					   					Blueprint.getBlock(key).getZoffset());
+			   B.setType(Material.getMaterial(Blueprint.getBlock(key).getMaterial()));
+					
+		}
 	}
 	@Override
     public void onEnable(){
@@ -51,9 +154,11 @@ public final class MechArchitech extends JavaPlugin {
 		getLogger().info("onEnable has been invoked!");
 		server = this.getServer() ;
 	 getServer().getPluginManager().registerEvents(new ArchitechListener(this), this);
-	 CurrentName = "test" ;
+	 CurrentName = "Anchor" ;
 	// ToolBlocks = new HashMap<String ,Block>() ;
-	 blueprint = new ArchitechBlueprint() ;
+	 blueprint = new ArchitechBlueprint(this) ;
+	 BlockEnum = 1 ;
+	 setPickBlock(false) ;
 	}
  
     @Override
@@ -73,13 +178,18 @@ public final class MechArchitech extends JavaPlugin {
     			    				}
     		if(args[0].equalsIgnoreCase("list"))
 			{
-    //			Set<String> keys = blueprint.getkeySet() ;
-    	//		Iterator<String> iterator = keys.iterator() ;
-    	//		String key ;
-    	//		while (iterator.hasNext()){
-    	//			   key = iterator.next() ;
-    	//			   getLogger().info(key + " "+ blueprint.get(key).getType().toString());
-    	//		}
+    			Set<String> keys = blueprint.getkeySet() ;
+    			Iterator<String> iterator = keys.iterator() ;
+    			String key ;
+    			while (iterator.hasNext()){
+    				   key = iterator.next() ;
+    				   getLogger().info(key +
+    						   ":"+
+    						   blueprint.getBlock(key).getMaterial()+
+    						   " X:" +Integer.toString(blueprint.getBlock(key).getXoffset()) +
+    						   " Y:"+ Integer.toString(blueprint.getBlock(key).getYoffset()) +
+    						   " Z:"+ Integer.toString(blueprint.getBlock(key).getZoffset())  );
+    			}
 		    
 		    				}
     		if(args[0].equalsIgnoreCase("sethe"))
@@ -88,13 +198,45 @@ public final class MechArchitech extends JavaPlugin {
     			System.out.println("sethe to "+ blueprint.getHe());
 			}
     		
+    		if(args[0].equalsIgnoreCase("selblock"))
+			{
+    			setPickBlock(true) ; 
+			}
+    		
+    		if(args[0].equalsIgnoreCase("draw"))
+			{
+    		
+    			Drawloc = server.getPlayer(sender.getName()).getLocation() ;
+    			Draw(Drawloc,blueprint) ;
+			}
+    		if(args[0].equalsIgnoreCase("move"))
+			{
+    			Erase(Drawloc,blueprint) ;
+    			Drawloc.add(1, 0, 0) ;
+    			Draw(Drawloc,blueprint) ;
+			}
+    		
+    		if(args[0].equalsIgnoreCase("rotate"))
+			{
+    			
+    			rotate(Drawloc,blueprint) ;
+			}
+
+    		if(args[0].equalsIgnoreCase("SetParam"))
+			{
+    			
+    			SelectedBlueprintBlock.setParam(args[1], args[2]);
+    			 getLogger().info(SelectedBlueprintBlock.getParam(args[1])+"set");
+    			
+			}
+    		
 			if(args[0].equalsIgnoreCase("save"))
 			{
 				
-    			ArchitechBlueprint blueprint = new ArchitechBlueprint() ;
+    	
 		 	FileOutputStream fout;
 				try {
-					fout = new FileOutputStream("F:\\a.txt");
+					fout = new FileOutputStream("G:\\a.txt");
 					ObjectOutputStream oos = new ObjectOutputStream(fout);   
 	    			oos.writeObject(blueprint);
 	    			oos.close();
@@ -110,9 +252,9 @@ public final class MechArchitech extends JavaPlugin {
 				if(args[0].equalsIgnoreCase("load"))
 				{ getLogger().info("load called");
 				 getLogger().info("He "+ blueprint.getHe());
-					blueprint = null ;
+					blueprint = new ArchitechBlueprint(this);
 						 try{
-						       FileInputStream fin = new FileInputStream("F:\\a.txt");
+						       FileInputStream fin = new FileInputStream("G:\\a.txt");
 							   ObjectInputStream ois = new ObjectInputStream(fin);
 							   blueprint=(ArchitechBlueprint) ois.readObject();
 							   ois.close();
@@ -131,26 +273,7 @@ public final class MechArchitech extends JavaPlugin {
 
 			
 	
- //   		Vector East = new Vector(1,0,0) ;
-   // 		Vector North = new Vector(0,0,1) ;
- //   		Block block = null ;
-  //  		int x = 0 ;
-  //  		Player player = server.getPlayer(sender.getName());
-  //  		Vector start = player.getLocation().toVector() ;
-    	//	while (x < 50) {
-    			
-    		
- //   		BlockIterator iterator  = new BlockIterator(player.getWorld(),start,East,1,50) ;
-   /* 		while (iterator.hasNext())
-    		{
-    			block = iterator.next() ;
-    			block.setType(Material.BEDROCK);
-    		}
-    		x = x+1  ;
-    		
-    		start = start.add(North) ;
-    		} */
-    	//	player.teleport(player.getLocation().subtract(block.getLocation())) ;
+
     		
     		return true;
     	}
@@ -158,5 +281,21 @@ public final class MechArchitech extends JavaPlugin {
             // If this hasn't happened the a value of false will be returned.
     	return false; 
     }
+
+
+	/**
+	 * @return the pickBlock
+	 */
+	public boolean isPickBlock() {
+		return PickBlock;
+	}
+
+
+	/**
+	 * @param pickBlock the pickBlock to set
+	 */
+	public void setPickBlock(boolean pickBlock) {
+		PickBlock = pickBlock;
+	}
 
 	}
