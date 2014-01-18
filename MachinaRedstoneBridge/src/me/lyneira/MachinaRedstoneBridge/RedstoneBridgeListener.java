@@ -27,9 +27,9 @@ class RedstoneBridgeListener implements Listener {
     	Block block = event.getBlock();
         if (event.getBlock().getType()!=Material.DIODE_BLOCK_OFF)
         	return;
-    	
            if (event.getNewCurrent()>event.getOldCurrent()) {
-            if (block.getRelative(BlockFace.DOWN).getType().equals(bridgeBlock)) {
+        	   
+            if (block.getRelative(BlockFace.DOWN).getType().equals(Material.BRICK)) {
             	BlockFace direction = ((Diode) block.getState().getData()).getFacing();
                 Block target = block.getRelative(direction);
                 // Queue up the bridge's target.
