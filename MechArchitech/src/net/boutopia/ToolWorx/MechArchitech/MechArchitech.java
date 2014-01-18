@@ -215,9 +215,14 @@ public final class MechArchitech extends JavaPlugin {
     						   " X:" +Integer.toString(blueprint.getBlock(key).getXoffset()) +
     						   " Y:"+ Integer.toString(blueprint.getBlock(key).getYoffset()) +
     						   " Z:"+ Integer.toString(blueprint.getBlock(key).getZoffset())  );
+    				   		    
     			}
+    			Location Anchor = blueprint.GetAnchorLocation() ;
+	   		    if (Anchor==null)getLogger().info("No Anchor Set"); else
+	   		    	getLogger().info("Anchor Location:" + Anchor.toString());
+	   		    }
 		    
-		    				}
+		    				
     		if(args[0].equalsIgnoreCase("sethe"))
 			{
     			blueprint.setHe(args[1]);

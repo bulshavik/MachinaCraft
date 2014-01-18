@@ -7,13 +7,14 @@ import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.plugin.Plugin;
 
 public class ArchitechBlueprint implements java.io.Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 5472644705341505937L;
+	private static final long serialVersionUID = 1L;
 	private Map<String, BlueprintBlock> ToolBlocks ;
 	private  String He ; 
 	private Boolean Anchored ; 
@@ -21,8 +22,8 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	private double Height ;
 	private double Width ;
 	private transient Location AnchorLocation ; 
-	private transient MechArchitech plugin ;
-	ArchitechBlueprint(MechArchitech plugin)
+	private transient Plugin plugin ;
+	public ArchitechBlueprint(Plugin plugin)
 	{
 	ToolBlocks = new HashMap<String,BlueprintBlock>()  ; 
 	this.plugin = plugin ;
@@ -71,7 +72,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 		int xOffset = block.getX() - AnchorLocation.getBlockX()  ;
 		int yOffset = block.getY() - AnchorLocation.getBlockY()  ;;
 		int zOffset = block.getZ() - AnchorLocation.getBlockZ()  ;;
-		BlueprintBlock BPB = new BlueprintBlock(block,plugin,xOffset,yOffset,zOffset) ;
+		BlueprintBlock BPB = new BlueprintBlock(block,(MechArchitech) plugin,xOffset,yOffset,zOffset) ;
 	ToolBlocks.put(currentName, BPB) ;
 		
 	}
