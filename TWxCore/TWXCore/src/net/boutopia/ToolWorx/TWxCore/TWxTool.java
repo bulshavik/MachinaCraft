@@ -3,7 +3,11 @@
  */
 package net.boutopia.ToolWorx.TWxCore;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import net.boutopia.ToolWorx.MechArchitech.ArchitechBlueprint;
@@ -21,7 +25,7 @@ import org.bukkit.plugin.Plugin;
 public class TWxTool {
 
 	private ArchitechBlueprint blueprint;
-
+	private List<TWxBlock> TWxBlocks ;
 	/**
 	 * Base Location of the blueprint. All other blocks are referenced relative to this location
 	 */
@@ -72,10 +76,12 @@ public class TWxTool {
 			plugin.getLogger().info("Anchor Location:" + Anchor.toString());
 	}
 
-	public TWxTool(Plugin plugin, ArchitechBlueprint Bprint, Location AnchorLoc) {
+	public TWxTool(TWxCore plugin, ArchitechBlueprint Bprint, Location AnchorLoc) throws NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		this.plugin = plugin;
 		plugin.getLogger().info("Tool contructor start");
 		Bprint.listblocks();
+		String type,className ; 
+		TWxBlocks = new ArrayList <TWxBlock>();
 		blueprint = Bprint.Clone(plugin);
 		this.AnchorLoc = AnchorLoc;
 		Set<String> keys = blueprint.getkeySet();
@@ -83,7 +89,7 @@ public class TWxTool {
 		String key;
 		while (iterator.hasNext()) {
 			key = iterator.next();
-			plugin.getLogger().info(
+			plugin.getLogger().info("Adding block to tool "+
 					key
 							+ ":"
 							+ blueprint.getBlock(key).getMaterial()
@@ -96,7 +102,24 @@ public class TWxTool {
 							+ " Z:"
 							+ Integer.toString(blueprint.getBlock(key)
 									.getZoffset()));
-
+			type = blueprint.getBlock(key).getParam("type") ;
+			if(!(type==null)){
+				
+				Iterator<String> iterator2 = plugin.getAvailibleBlocks().iterator() ;
+				plugin.getLogger().info("size"+ Integer.toString(plugin.getAvailibleBlocks().size()));
+				while(iterator2.hasNext()){
+					className = iterator2.next() ;
+					plugin.getLogger().info("checking:"+className);
+					if(type.equalsIgnoreCase(className)){
+					plugin.getLogger().info("Driver Block Found "+ key);
+							
+				plugin.getLogger().info(Class.forName(className).toString());
+				Class<?> clazz = Class.forName(className);
+				Constructor<?> constructor = clazz.getConstructor(TWxTool.class);
+				TWxBlock instance = (TWxBlock) constructor.newInstance(this);
+				plugin.getLogger().info("new TWxblock called");
+				if(!(instance==null)) TWxBlocks.add((TWxBlock)instance) ;
+					}}}
 		}
 
 		plugin.getLogger().info("Tool contructor end");
@@ -149,6 +172,12 @@ public class TWxTool {
 
 	}
 
+	public boolean moveRelative(int x,int y ,int z) {
+		Erase() ;
+		AnchorLoc.add(1, 0, 0);
+		Draw() ;
+		return true ; 
+	}
 	/**
 	 * Called by the Core Plugin when the tool needs to update.
 	 * @param none
@@ -156,9 +185,12 @@ public class TWxTool {
 	 * 
 	 */
 	public boolean update() {
-		Erase();
-		AnchorLoc.add(1, 0, 0);
-		Draw();
+		Iterator <TWxBlock> iterator = TWxBlocks.iterator();
+		TWxBlock WorxBlock ;
+		while(iterator.hasNext()){
+			WorxBlock = iterator.next() ;
+			WorxBlock.Run(); 
+		}
 		
 		return true ;
 	}

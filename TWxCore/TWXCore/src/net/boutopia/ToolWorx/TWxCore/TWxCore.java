@@ -7,6 +7,7 @@ package net.boutopia.ToolWorx.TWxCore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +41,7 @@ public class TWxCore extends JavaPlugin {
 	static Server server ;
 	private List <ArchitechBlueprint>  blueprints;
 	private List <TWxTool> tools ;
+	private List <String> AvailibleBlocks ; 
 	/**
 	 * 
 	 */
@@ -121,7 +123,30 @@ public class TWxCore extends JavaPlugin {
 		getLogger().info("Print De tected!!!");
 		Blueprint.listblocks() ;
 			
-		tools.add(new TWxTool(this,Blueprint,loc));
+		try {
+			tools.add(new TWxTool(this,Blueprint,loc));
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		getLogger().info("tool added");
 		
 		return true ;
@@ -129,6 +154,8 @@ public class TWxCore extends JavaPlugin {
 	}
 	@Override
     public void onEnable(){
+		setAvailibleBlocks(new ArrayList <String>());
+		AvailibleBlocks.add("net.boutopia.ToolWorx.TWxCore.TWxDriverBlock");
 		server = getServer() ;
 		getLogger().info("server set");
 		getLogger().info("onEnable has been invoked!");
@@ -145,13 +172,12 @@ public class TWxCore extends JavaPlugin {
 	tools = new ArrayList <TWxTool>();
     getLogger().info("load called");
 	try{
-			       FileInputStream fin = new FileInputStream("G:\\a.txt");
+			       FileInputStream fin = new FileInputStream("C:\\Users\\user\\Downloads\\bukkit\\plugins\\MechArchitech\\a.txt");
 				   ObjectInputStream ois = new ObjectInputStream(fin);
 				   bprint = (ArchitechBlueprint) ois.readObject();
 				   ois.close();
 				   bprint.setPlugin(this);
 				   blueprints.add(bprint) ;
-				   
 				   getLogger().info(" Core load done");
 				 
 		 
@@ -209,6 +235,18 @@ public class TWxCore extends JavaPlugin {
 		
 		
 		
+	}
+	/**
+	 * @return the availibleBlocks
+	 */
+	public List <String> getAvailibleBlocks() {
+		return AvailibleBlocks;
+	}
+	/**
+	 * @param availibleBlocks the availibleBlocks to set
+	 */
+	public void setAvailibleBlocks(List <String> availibleBlocks) {
+		AvailibleBlocks = availibleBlocks;
 	}
 
 }
