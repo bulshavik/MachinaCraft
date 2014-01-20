@@ -11,8 +11,8 @@ package net.boutopia.ToolWorx.MechArchitech;
 
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.block.Block;
 
@@ -20,7 +20,7 @@ import org.bukkit.block.Block;
  * @author user
  *
  */
-public class BlueprintBlock implements  java.io.Serializable {
+public class BlueprintBlock implements  java.io.Serializable, Cloneable {
 
 	/**
 	 * 
@@ -33,6 +33,8 @@ public class BlueprintBlock implements  java.io.Serializable {
 	private int Xoffset;
 	private int Yoffset;
 	private int Zoffset;
+	private float pitch ;
+	private float yaw ;
 	private String material ;
 	private Map<String,String> Params ;
 	
@@ -45,11 +47,15 @@ public class BlueprintBlock implements  java.io.Serializable {
 	
 BlueprintBlock(Block block,MechArchitech plugin,int x,int y,int z) {
 		setMaterial(block.getType().toString());
+		setPitch(block.getLocation().getPitch()) ;
+		setYaw(block.getLocation().getYaw()) ;
 		setXoffset(x) ;
 		setYoffset(y) ;
 		setZoffset(z) ;
 		Params = new HashMap<String,String>();
 		}
+
+
 BlueprintBlock(String Material,int x,int y,int z) {
 	material = Material;
 	setXoffset(x) ;
@@ -58,7 +64,18 @@ BlueprintBlock(String Material,int x,int y,int z) {
 	Params = new HashMap<String,String>();
 	}
 
+	
 
+	/* (non-Javadoc)
+ * @see java.lang.Object#clone()
+ */
+@Override
+protected Object clone() throws CloneNotSupportedException {
+			
+	
+	return super.clone();
+}
+	
 
 	/**
 	 * @return the zoffset
@@ -122,20 +139,45 @@ public void setParam(String key,String value){
 		this.material = material;
 	}
 
-	public BlueprintBlock Clone() {
-		String key,value ;
-		BlueprintBlock block = new BlueprintBlock(this.material,Xoffset,Yoffset,Zoffset);
-		Iterator<String> iterator = Params.keySet().iterator() ;
-		while(iterator.hasNext()){
-			key = iterator.next() ;
-			value = Params.get(key);
-			block.Params.put(key, value);
 
-			
-		}
-		return block;
+	public Set<String> getParamkeys() {
+		return Params.keySet() ;
+
 	}
 
+
+	/**
+	 * @return the pitch
+	 */
+	public float getPitch() {
+		return pitch;
+	}
+
+
+	/**
+	 * @param pitch the pitch to set
+	 */
+	public void setPitch(float pitch) {
+		this.pitch = pitch;
+	}
+
+
+	/**
+	 * @return the yaw
+	 */
+	public float getYaw() {
+		return yaw;
+	}
+
+
+	/**
+	 * @param yaw the yaw to set
+	 */
+	public void setYaw(float yaw) {
+		this.yaw = yaw;
+	}
+
+	
 
 }
 

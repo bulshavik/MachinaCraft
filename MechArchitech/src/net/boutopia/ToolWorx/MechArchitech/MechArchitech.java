@@ -6,6 +6,7 @@
  *
  */
 package net.boutopia.ToolWorx.MechArchitech ;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -32,6 +34,7 @@ public final class MechArchitech extends JavaPlugin {
 	private boolean buildingprint ;
 	private boolean PickBlock ;
 	static Server server ;
+	String pluginFolder ;
 	public void AddBlock(Block block){
 		world = block.getWorld() ;
 		if(!buildingprint)return ; 
@@ -46,6 +49,7 @@ public final class MechArchitech extends JavaPlugin {
 		}
 		
 	public void RemoveBlock(Block block){
+		if(!buildingprint)return ; 
 		String BlockName = FindBlock(block,blueprint) ;
 		if(!(BlockName==null)) 
 			{
@@ -56,6 +60,9 @@ public final class MechArchitech extends JavaPlugin {
 	
 	
 	public void SelectBlock(Block block){
+		if(!buildingprint)return ; 
+		String foundblock = FindBlock(block,blueprint) ;
+		if(!(foundblock==null))
 		SelectedBlueprintBlock = blueprint.getBlock(FindBlock(block,blueprint));
 	}
 	
@@ -183,9 +190,13 @@ public final class MechArchitech extends JavaPlugin {
 	}
 	@Override
     public void onEnable(){
+		File parent = getDataFolder();
+	    if (!parent.exists())
+            parent.mkdirs();
        buildingprint = false;
 		getLogger().info("onEnable has been invoked!");
 		server = this.getServer() ;
+		pluginFolder = getDataFolder().getPath() ; 
 	 getServer().getPluginManager().registerEvents(new ArchitechListener(this), this);
 	 CurrentName = "Anchor" ;
 	// ToolBlocks = new HashMap<String ,Block>() ;
@@ -216,23 +227,8 @@ public final class MechArchitech extends JavaPlugin {
     		
     		if(args[0].equalsIgnoreCase("list"))
 			{
-    			Set<String> keys = blueprint.getkeySet() ;
-    			Iterator<String> iterator = keys.iterator() ;
-    			String key ;
-    			while (iterator.hasNext()){
-    				   key = iterator.next() ;
-    				   getLogger().info(key +
-    						   ":"+
-    						   blueprint.getBlock(key).getMaterial()+
-    						   " X:" +Integer.toString(blueprint.getBlock(key).getXoffset()) +
-    						   " Y:"+ Integer.toString(blueprint.getBlock(key).getYoffset()) +
-    						   " Z:"+ Integer.toString(blueprint.getBlock(key).getZoffset())  );
-    				   		    
-    			}
-    			Location Anchor = blueprint.GetAnchorLocation() ;
-	   		    if (Anchor==null)getLogger().info("No Anchor Set"); else
-	   		    	getLogger().info("Anchor Location:" + Anchor.toString());
-	   		    }
+    			blueprint.listblocks();
+			}
 		    
 		    				
     		if(args[0].equalsIgnoreCase("sethe"))
@@ -287,7 +283,7 @@ public final class MechArchitech extends JavaPlugin {
     	
 		 	FileOutputStream fout;
 				try {
-					fout = new FileOutputStream("F:\\a.txt");
+					fout = new FileOutputStream(pluginFolder+ "\\a.txt");
 					ObjectOutputStream oos = new ObjectOutputStream(fout);   
 	    			oos.writeObject(blueprint);
 	    			oos.close();
@@ -305,7 +301,7 @@ public final class MechArchitech extends JavaPlugin {
 				 getLogger().info("He "+ blueprint.getHe());
 					blueprint = new ArchitechBlueprint(this);
 						 try{
-						       FileInputStream fin = new FileInputStream("F:\\a.txt");
+						       FileInputStream fin = new FileInputStream(pluginFolder+"\\a.txt");
 							   ObjectInputStream ois = new ObjectInputStream(fin);
 							   blueprint=(ArchitechBlueprint) ois.readObject();
 							   ois.close();

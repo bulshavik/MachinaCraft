@@ -22,7 +22,6 @@ public class ArchitechListener implements Listener {
 	 @EventHandler
 	    public void onClick(BlockPlaceEvent event) {
 		   Block block = event.getBlockPlaced() ;
-		   
 		 plugin.AddBlock(block);
 		 
 	 }

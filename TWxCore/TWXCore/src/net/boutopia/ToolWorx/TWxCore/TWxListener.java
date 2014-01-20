@@ -13,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Lever;
-import net.boutopia.ToolWorx.TWxCore.TWxCore;;
 /**
  * @author bulshavik
  *
@@ -46,7 +45,7 @@ public class TWxListener implements Listener {
 	        }
 
 	        Block attachedTo = block.getRelative(attachedFace);
-	        plugin.onLever(event.getPlayer(), attachedTo, attachedFace.getOppositeFace(), event.getItem());
+	       plugin.onLever(event.getPlayer(), attachedTo, attachedFace.getOppositeFace(), event.getItem());
 	    }
 
 }

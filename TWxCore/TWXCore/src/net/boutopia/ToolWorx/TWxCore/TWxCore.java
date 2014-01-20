@@ -4,18 +4,16 @@
 package net.boutopia.ToolWorx.TWxCore;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import net.boutopia.ToolWorx.MechArchitech.ArchitechBlueprint;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -58,6 +56,7 @@ public class TWxCore extends JavaPlugin {
 	    			Iterator<ArchitechBlueprint> iterator = blueprints.iterator();
 	    			while (iterator.hasNext()){
 	    				bprint = iterator.next() ;
+	    				bprint.listblocks();
 	    				getLogger().info(bprint.DimensionString());
 	    				
 	    				
@@ -90,7 +89,6 @@ public class TWxCore extends JavaPlugin {
 		
 			Block Anchor = loc.getWorld().getBlockAt(loc);
 			int holding ;
-			Anchor.setType(Material.getMaterial(Blueprint.getBlock("Anchor").getMaterial()));
 			Set<String> keys = Blueprint.getkeySet() ;
 			Iterator<String> iterator = keys.iterator() ;
 			String key ;
@@ -106,7 +104,7 @@ public class TWxCore extends JavaPlugin {
 	 					
 			}
 	public Boolean detect(Location loc,ArchitechBlueprint Blueprint){
-		Block Anchor = loc.getWorld().getBlockAt(loc);
+	Block Anchor = loc.getWorld().getBlockAt(loc);
 		Block B ;
 		if (!Anchor.getType().toString().equals(Blueprint.getBlock("Anchor").getMaterial())) return false ;
 		Set<String> keys = Blueprint.getkeySet() ;
@@ -127,6 +125,7 @@ public class TWxCore extends JavaPlugin {
 		getLogger().info("tool added");
 		
 		return true ;
+
 	}
 	@Override
     public void onEnable(){
@@ -134,6 +133,11 @@ public class TWxCore extends JavaPlugin {
 		getLogger().info("server set");
 		getLogger().info("onEnable has been invoked!");
 		server = this.getServer() ;
+		File parent = getDataFolder();
+	      
+	        if (!parent.exists())
+	            parent.mkdirs();
+
 	 getServer().getPluginManager().registerEvents(new TWxListener(this), this);
 		getLogger().info("TWxListener registered!");
 	blueprints = new ArrayList <ArchitechBlueprint>();
@@ -141,7 +145,7 @@ public class TWxCore extends JavaPlugin {
 	tools = new ArrayList <TWxTool>();
     getLogger().info("load called");
 	try{
-			       FileInputStream fin = new FileInputStream("F:\\a.txt");
+			       FileInputStream fin = new FileInputStream("G:\\a.txt");
 				   ObjectInputStream ois = new ObjectInputStream(fin);
 				   bprint = (ArchitechBlueprint) ois.readObject();
 				   ois.close();
@@ -202,8 +206,8 @@ public class TWxCore extends JavaPlugin {
 			
 			
 		}
-		getLogger().info(blueprints.get(0).DimensionString());
-		// TODO Auto-generated method stub
+		
+		
 		
 	}
 

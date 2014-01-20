@@ -37,7 +37,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 		plugin.getLogger().info("list blocks called");
 		Set<String> keys = ToolBlocks.keySet() ;
 		Iterator<String> iterator = keys.iterator() ;
-		String key ;
+		String key,Paramkey ;
 		BlueprintBlock block ;
 		while (iterator.hasNext()){
 			   key = iterator.next() ;
@@ -45,9 +45,15 @@ public class ArchitechBlueprint implements java.io.Serializable {
 			   plugin.getLogger().info(key +
 					   ":"+
 					   block.getMaterial()+
-					   " X:" +Integer.toString(block.getXoffset()) +
-					   " Y:"+ Integer.toString(block.getYoffset()) +
-					   " Z:"+ Integer.toString(block.getZoffset())  );
+					   "\t X:" +Integer.toString(block.getXoffset()) +
+					   "\t Y:"+ Integer.toString(block.getYoffset()) +
+					   "\t Z:"+ Integer.toString(block.getZoffset())  );
+			   plugin.getLogger().info("\tParams:");
+			   Iterator<String> Paramiterator = block.getParamkeys().iterator() ;
+			   while (Paramiterator.hasNext()){
+				   Paramkey = Paramiterator.next() ;
+				   plugin.getLogger().info("\t\t"+Paramkey+":" + block.getParam(Paramkey));
+			   }
 			   		    
 		}
 		Location Anchor = GetAnchorLocation() ;
@@ -66,7 +72,12 @@ public class ArchitechBlueprint implements java.io.Serializable {
 		while (iterator.hasNext())
 		{
 			key= iterator.next() ;
-			blueprint.ToolBlocks.put(key, this.getBlock(key).Clone());
+			try {
+				blueprint.ToolBlocks.put(key, (BlueprintBlock) this.getBlock(key).clone());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			plugin.getLogger().info("3");
 		}
 		plugin.getLogger().info("4");
@@ -154,6 +165,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	return AnchorLocation ;	
 	}
 	public void RemoveBlock(String key) {
+		
 		ToolBlocks.remove(key) ;
 		
 	}
