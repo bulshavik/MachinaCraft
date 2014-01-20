@@ -11,6 +11,7 @@ package net.boutopia.ToolWorx.MechArchitech;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.bukkit.block.Block;
@@ -49,6 +50,15 @@ BlueprintBlock(Block block,MechArchitech plugin,int x,int y,int z) {
 		setZoffset(z) ;
 		Params = new HashMap<String,String>();
 		}
+BlueprintBlock(String Material,int x,int y,int z) {
+	material = Material;
+	setXoffset(x) ;
+	setYoffset(y) ;
+	setZoffset(z) ;
+	Params = new HashMap<String,String>();
+	}
+
+
 
 	/**
 	 * @return the zoffset
@@ -110,6 +120,20 @@ public void setParam(String key,String value){
 	 */
 	public void setMaterial(String material) {
 		this.material = material;
+	}
+
+	public BlueprintBlock Clone() {
+		String key,value ;
+		BlueprintBlock block = new BlueprintBlock(this.material,Xoffset,Yoffset,Zoffset);
+		Iterator<String> iterator = Params.keySet().iterator() ;
+		while(iterator.hasNext()){
+			key = iterator.next() ;
+			value = Params.get(key);
+			block.Params.put(key, value);
+
+			
+		}
+		return block;
 	}
 
 

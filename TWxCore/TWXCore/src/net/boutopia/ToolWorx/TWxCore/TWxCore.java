@@ -15,6 +15,7 @@ import java.util.TreeSet;
 
 import net.boutopia.ToolWorx.MechArchitech.ArchitechBlueprint;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -25,6 +26,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
 
 
 
@@ -38,16 +41,17 @@ public class TWxCore extends JavaPlugin {
 	
 	static Server server ;
 	private List <ArchitechBlueprint>  blueprints;
+	private List <TWxTool> tools ;
 	/**
 	 * 
 	 */
 	public TWxCore() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	 public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
 	    	if(cmd.getName().equalsIgnoreCase("tw")){ // If the player typed /basic then do the following...
 	    		if(args.length < 1) return false ;
-	    		getLogger().info("Command Called\n" + args[0]);
+	    		getLogger().info("Command Called:" + args[0]);
 	    		
 	    		if(args[0].equalsIgnoreCase("list")){
 	    			ArchitechBlueprint bprint ;
@@ -60,7 +64,24 @@ public class TWxCore extends JavaPlugin {
 	    			}
 	    		}
 	    			
-	    			
+	    		if(args[0].equalsIgnoreCase("Draw")){
+	    			TWxTool tool ;
+	    			Player player = server.getPlayer(sender.getName());
+	    			getLogger().info(player.getDisplayName()) ;
+	    			Iterator<TWxTool> iterator = tools.iterator();
+	    			 getLogger().info(player.getLocation().toString());
+	    			while (iterator.hasNext()){
+	    				tool = iterator.next() ;
+	    				tool.SetLocation( player.getLocation() );
+	    				getLogger().info("11");
+	    				
+	    				getLogger().info(tool.getLocation().toString());
+	    				tool.listblocks();
+	    				getLogger().info("22");
+	    				tool.Draw();
+	    				getLogger().info("33");
+	    			}
+	    		}		
 	    	
 	    }return true;
 	    	}
@@ -99,23 +120,34 @@ public class TWxCore extends JavaPlugin {
 			   if (!B.getType().toString().equals(Blueprint.getBlock(key).getMaterial())) return false ;
 							
 		} 
-		getLogger().info("Print Detected!!!");
+		getLogger().info("Print De tected!!!");
+		Blueprint.listblocks() ;
+			
+		tools.add(new TWxTool(this,Blueprint,loc));
+		getLogger().info("tool added");
+		
 		return true ;
 	}
 	@Override
     public void onEnable(){
-        // TODO Insert logic to be performed when the plugin is enabled
+		server = getServer() ;
+		getLogger().info("server set");
 		getLogger().info("onEnable has been invoked!");
 		server = this.getServer() ;
 	 getServer().getPluginManager().registerEvents(new TWxListener(this), this);
 		getLogger().info("TWxListener registered!");
-	blueprints = new ArrayList <ArchitechBlueprint>(); 
-	{ getLogger().info("load called");
+	blueprints = new ArrayList <ArchitechBlueprint>();
+	ArchitechBlueprint bprint = new ArchitechBlueprint(this) ;
+	tools = new ArrayList <TWxTool>();
+    getLogger().info("load called");
 	try{
 			       FileInputStream fin = new FileInputStream("F:\\a.txt");
 				   ObjectInputStream ois = new ObjectInputStream(fin);
-				   blueprints.add((ArchitechBlueprint) ois.readObject());
+				   bprint = (ArchitechBlueprint) ois.readObject();
 				   ois.close();
+				   bprint.setPlugin(this);
+				   blueprints.add(bprint) ;
+				   
 				   getLogger().info(" Core load done");
 				 
 		 
@@ -124,11 +156,26 @@ public class TWxCore extends JavaPlugin {
 				   ex.printStackTrace();
 				 
 			   } 
+		
+
+	
+	 BukkitScheduler scheduler = server.getScheduler();
+     scheduler.scheduleSyncRepeatingTask(this, new BukkitRunnable() {
+
+		@Override
+		public void run() {
+			 
+			   TWxTool tool ;
+			   Iterator<TWxTool> iterator = tools.iterator() ;
+					   while (iterator.hasNext()){
+						   tool = iterator.next() ;
+						   tool.update() ;
+					   }
+			
 		}
-
+     
+     }, 20L,20L);
 	
-	
-
 	}
  
     @Override

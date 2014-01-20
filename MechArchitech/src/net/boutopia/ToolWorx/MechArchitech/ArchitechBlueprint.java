@@ -15,7 +15,7 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Map<String, BlueprintBlock> ToolBlocks ;
+	public Map<String, BlueprintBlock> ToolBlocks ;
 	private  String He ; 
 	private Boolean Anchored ; 
 	private double Length ;
@@ -28,6 +28,56 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	ToolBlocks = new HashMap<String,BlueprintBlock>()  ; 
 	this.plugin = plugin ;
 	Anchored = false ; 
+	}
+	public void setPlugin(Plugin plugin){
+		this.plugin = plugin ;
+	}
+	public void listblocks()
+	{
+		plugin.getLogger().info("list blocks called");
+		Set<String> keys = ToolBlocks.keySet() ;
+		Iterator<String> iterator = keys.iterator() ;
+		String key ;
+		BlueprintBlock block ;
+		while (iterator.hasNext()){
+			   key = iterator.next() ;
+			   block = ToolBlocks.get(key);
+			   plugin.getLogger().info(key +
+					   ":"+
+					   block.getMaterial()+
+					   " X:" +Integer.toString(block.getXoffset()) +
+					   " Y:"+ Integer.toString(block.getYoffset()) +
+					   " Z:"+ Integer.toString(block.getZoffset())  );
+			   		    
+		}
+		Location Anchor = GetAnchorLocation() ;
+		    if (Anchor==null)plugin.getLogger().info("No Anchor Set"); else
+		    	plugin.getLogger().info("Anchor Location:" + Anchor.toString());
+	}
+	public ArchitechBlueprint Clone(Plugin plugin) {
+		plugin.getLogger().info("Architect clone start2");
+		ArchitechBlueprint blueprint = new ArchitechBlueprint(plugin) ;
+		plugin.getLogger().info("1");
+		String key ;
+		blueprint.setAnchorLocation(AnchorLocation) ;
+		plugin.getLogger().info("2");
+		listblocks();
+		Iterator<String> iterator = this.getkeySet().iterator();
+		while (iterator.hasNext())
+		{
+			key= iterator.next() ;
+			blueprint.ToolBlocks.put(key, this.getBlock(key).Clone());
+			plugin.getLogger().info("3");
+		}
+		plugin.getLogger().info("4");
+		blueprint.CalculateDimensions();
+		
+		plugin.getLogger().info("Architect clone end");
+		return blueprint ;
+	}
+	private void setAnchorLocation(Location anchorLocation2) {
+		AnchorLocation = anchorLocation2 ; 
+		
 	}
 	public void CalculateDimensions()
 	{
@@ -106,5 +156,14 @@ public class ArchitechBlueprint implements java.io.Serializable {
 	public void RemoveBlock(String key) {
 		ToolBlocks.remove(key) ;
 		
+	}
+	public double getHeight() {
+		return Height ;
+	}
+	public double getLength() {
+		return Length ;
+	}
+	public double getWidth() {
+		return Width ;
 	}
 }

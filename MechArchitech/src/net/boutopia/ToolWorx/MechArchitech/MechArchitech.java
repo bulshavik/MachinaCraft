@@ -29,11 +29,12 @@ public final class MechArchitech extends JavaPlugin {
 	public World world ;
 	public Location Drawloc ; 
 	private BlueprintBlock SelectedBlueprintBlock ;
+	private boolean buildingprint ;
 	private boolean PickBlock ;
 	static Server server ;
 	public void AddBlock(Block block){
 		world = block.getWorld() ;
-		
+		if(!buildingprint)return ; 
 		if (CurrentName.equals(LastName)){
 		CurrentName = "Block" + Integer.toString(BlockEnum);
 		BlockEnum = BlockEnum +1 ;
@@ -45,7 +46,12 @@ public final class MechArchitech extends JavaPlugin {
 		}
 		
 	public void RemoveBlock(Block block){
-		blueprint.RemoveBlock(FindBlock(block,blueprint)) ;
+		String BlockName = FindBlock(block,blueprint) ;
+		if(!(BlockName==null)) 
+			{
+			getLogger().info("breaking block");
+			blueprint.RemoveBlock(FindBlock(block,blueprint)) ;
+			}
 	}
 	
 	
@@ -73,6 +79,7 @@ public final class MechArchitech extends JavaPlugin {
 	
 	public String FindBlock(Block block,ArchitechBlueprint Blueprint)
 	{
+		if (Blueprint.GetAnchorLocation() == null) return null ;
 		Location Anchor = Blueprint.GetAnchorLocation() ;
 		 getLogger().info("Anchor Location: X" );
 		Location B ;// = Anchor ;
@@ -176,7 +183,7 @@ public final class MechArchitech extends JavaPlugin {
 	}
 	@Override
     public void onEnable(){
-        // TODO Insert logic to be performed when the plugin is enabled
+       buildingprint = false;
 		getLogger().info("onEnable has been invoked!");
 		server = this.getServer() ;
 	 getServer().getPluginManager().registerEvents(new ArchitechListener(this), this);
@@ -202,6 +209,11 @@ public final class MechArchitech extends JavaPlugin {
     				{
     			CurrentName = args[1] ;
     			    				}
+    		if(args[0].equalsIgnoreCase("abort"))
+			{
+    			buildingprint= false ;
+			}
+    		
     		if(args[0].equalsIgnoreCase("list"))
 			{
     			Set<String> keys = blueprint.getkeySet() ;
@@ -249,6 +261,7 @@ public final class MechArchitech extends JavaPlugin {
     		
     		if(args[0].equalsIgnoreCase("new"))
 			{
+    			buildingprint = true ;
     			blueprint= new ArchitechBlueprint(this);		
     			}
     		
