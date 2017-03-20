@@ -339,7 +339,7 @@ public final class BlockData {
 
         set(Material.DIODE_BLOCK_ON.getId()).drillable(true).copyData(true).attached(true);
 
-        set(Material.LOCKED_CHEST.getId());
+     //  set(Material.LOCKED_CHEST.getId()); Locked Chest are no longer in the game
 
         set(Material.TRAP_DOOR.getId()).drillable(true).copyData(true).attached(true).drillTime(breakTimeFast);
 
