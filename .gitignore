@@ -1,6 +1,5 @@
 .classpath
-.project
-.settings
+.project.settings
 .externalToolBuilders
 bin
 jar
