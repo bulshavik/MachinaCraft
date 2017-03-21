@@ -12,6 +12,8 @@
 		<ant dir="MachinaFactory" />
 		<ant dir="MachinaRedstoneBridge" />
 		<ant dir="MachinaPlanter" />
+		<ant dir="TWxCore" />
+				
 
 		<copy todir="${jarDir}">
 			<fileset dir="resources" includes="*" />

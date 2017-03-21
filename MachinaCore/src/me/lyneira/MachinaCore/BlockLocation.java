@@ -148,16 +148,6 @@ public final class BlockLocation {
     }
 
     /**
-     * Sets the data at this {@link BlockLocation}.
-     * 
-     * @param data
-     *            The data to set
-     */
-    public final void setData(final byte data) {
-        world.getBlockAt(x, y, z).setData(data);
-    }
-
-    /**
      * Sets the type id and data at this {@link BlockLocation}.
      * 
      * @param type

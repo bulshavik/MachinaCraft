@@ -70,7 +70,7 @@ public class Planter implements Machina {
                 && lever.checkType(Material.LEVER) //
                 && base.checkType(Blueprint.baseMaterial) //
                 && chest.checkType(Material.CHEST) //
-        && furnace.checkTypes(Material.BURNING_FURNACE)))
+        && furnace.checkTypes(Material.FURNACE)))
             return false;
 
         return rail.verify();

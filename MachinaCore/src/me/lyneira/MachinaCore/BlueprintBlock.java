@@ -25,6 +25,7 @@ public class BlueprintBlock {
      * The type of this block
      */
     public final int typeId;
+    public final Material type;
 
     /**
      * Whether this block needs special handling during detection.
@@ -54,6 +55,7 @@ public class BlueprintBlock {
         vectors.put(BlockRotation.ROTATE_180, south.rotated(BlockRotation.ROTATE_180));
         vectors.put(BlockRotation.ROTATE_270, south.rotated(BlockRotation.ROTATE_270));
         this.typeId = type.getId();
+        this.type = type ;
         this.key = key;
         this.attached = BlockData.isAttached(this.typeId);
     }

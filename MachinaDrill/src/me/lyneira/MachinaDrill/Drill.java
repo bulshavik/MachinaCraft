@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import me.lyneira.MachinaCore.BlockData;
 import me.lyneira.MachinaCore.BlockLocation;
@@ -37,6 +38,7 @@ import com.google.common.base.Predicate;
  * @author 5phinX
  */
 final class Drill extends Movable {
+	final static Logger log = Logger.getLogger("Minecraft");
     /**
      * The number of server ticks to wait for a move action.
      */
@@ -174,6 +176,7 @@ final class Drill extends Movable {
      *         if the drill was successful or there was nothing to drill.
      */
     private boolean doDrill(final BlockLocation anchor) {
+    //		log.info("doDrill called");
         if (BlockData.isDrillable(nextTypeId)) {
             Block chestBlock = anchor.getRelative(chest.vector(yaw)).getBlock();
 
@@ -339,6 +342,8 @@ final class Drill extends Movable {
             }
         }
         currentEnergy -= energy;
+    	setFurnace(anchor, true);
+    
         return true;
     }
 
@@ -363,6 +368,7 @@ final class Drill extends Movable {
      */
     public boolean onLever(final BlockLocation anchor, Player player, ItemStack itemInHand) {
         if ((this.player == player && player.hasPermission("machinadrill.deactivate-own")) || player.hasPermission("machinadrill.deactivate-all")) {
+        
             if (direction != BlockFace.DOWN && itemInHand != null && itemInHand.getType() == Blueprint.rotateMaterial) {
                 doRotate(anchor, BlockRotation.yawFromLocation(player.getLocation()));
                 return true;

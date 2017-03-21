@@ -63,13 +63,17 @@ public final class MachinaCore extends JavaPlugin {
      *            The item in the player's hand
      */
     public final void onLever(Player player, final BlockLocation location, final BlockFace leverFace, ItemStack item) {
+    //	 log.info("on Lever activated");
+
         if (MachinaRunner.exists(location)) {
             // Machina exists, run onLever.
+     //   	 log.info("Machine Exist");
             MachinaRunner.onLever(location, player, item);
         } else {
             for (MachinaBlueprint i : blueprints.values()) {
                 Machina machina = i.detect(player, location, leverFace, item);
                 if (machina != null) {
+         //       	 log.info("Create new Machine");
                     new MachinaRunner(this, machina, location, leverFace);
                     break;
                 }
@@ -145,4 +149,14 @@ public final class MachinaCore extends JavaPlugin {
     public final void unRegisterBlueprint(MachinaBlueprint blueprint) {
         blueprints.remove((blueprint.getClass()));
     }
+
+	/**
+	 * Sets the data at this {@link BlockLocation}.
+	 * 
+	 * @param data
+	 *            The data to set
+	 */
+	//public final void setData(final byte data) {
+	//    world.getBlockAt(x, y, z).setData(data);
+	//}
 }

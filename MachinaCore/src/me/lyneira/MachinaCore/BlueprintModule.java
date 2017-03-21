@@ -6,6 +6,7 @@ import java.util.Map;
 
 import me.lyneira.util.InventoryManager;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -57,6 +58,8 @@ class BlueprintModule {
         BlockVector[] vectors = blueprintVectors.get(yaw);
         for (int i = 0; i < size; i++) {
             if (!blueprint[i].key) {
+            	Material x = anchor.getRelative(vectors[i]).getType() ;
+            	Material y = blueprint[i].type ;
                 if (anchor.getRelative(vectors[i]).getTypeId() != blueprint[i].typeId) {
                     return false;
                 }

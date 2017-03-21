@@ -3,7 +3,9 @@ package me.lyneira.MachinaCore;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +19,7 @@ public abstract class Movable implements Machina {
     protected final MovableBlueprint blueprint;
     private final List<Integer> modules;
     private final int moduleCount;
-
+    final static Logger log = Logger.getLogger("Minecraft");
     private final BlueprintBlock[] unifiedBlueprint;
     private final BlockVector[] unifiedVectors;
     private final int size;
@@ -73,7 +75,11 @@ public abstract class Movable implements Machina {
     @Override
     public boolean verify(final BlockLocation anchor) {
         for (int i = 0; i < size; i++) {
-            if (anchor.getRelative(unifiedVectors[i]).getTypeId() != unifiedBlueprint[i].typeId) {
+        	Material x = anchor.getRelative(unifiedVectors[i]).getType() ;
+        	Material y = unifiedBlueprint[i].type ;
+       // 	log.info (x.toString() + " " + y.toString());
+            if (anchor.getRelative(unifiedVectors[i]).getType() != unifiedBlueprint[i].type) {
+            	if(y!=Material.BURNING_FURNACE)
                 return false;
             }
         }

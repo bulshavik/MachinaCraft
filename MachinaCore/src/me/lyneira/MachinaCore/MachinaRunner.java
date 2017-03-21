@@ -3,6 +3,7 @@ package me.lyneira.MachinaCore;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.BlockFace;
@@ -21,7 +22,7 @@ class MachinaRunner implements Runnable {
      */
     private static final Map<BlockLocation, MachinaRunner> machinae = new HashMap<BlockLocation, MachinaRunner>();
     private static final int chunkUnloadDistance = 1;
-
+    final static Logger log = Logger.getLogger("Minecraft");
     private final MachinaCore plugin;
     private final Machina machina;
     private BlockLocation anchor;
@@ -50,22 +51,32 @@ class MachinaRunner implements Runnable {
      * Runs the machina.
      */
     public void run() {
+  //  	log.info("Run") ;
         if (!active)
-            return;
+        {
+    //    	log.info("inactive ") ;
+        	return;
+        }
+            
         if (machina.verify(anchor)) {
             HeartBeatEvent event = machina.heartBeat(anchor);
             if (event == null || event.delay <= 0) {
                 deActivate();
+      //          log.info("deactivated");
             } else {
+           // 	 log.info("run 1");
                 if (event.newAnchor != null) {
+      //          	 log.info("run 2");
                     machinae.remove(anchor);
                     anchor = event.newAnchor;
                     machinae.put(anchor, this);
                 }
+         //       log.info("run 3");
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, this, event.delay);
             }
         } else {
-            deActivate();
+        	 log.info("deactivated 2");
+      //      deActivate();
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import me.lyneira.MachinaCore.BlockData;
 import me.lyneira.MachinaCore.BlockLocation;
@@ -29,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
 final class Blueprint extends MovableBlueprint {
     private static BlueprintFactory blueprint;
     static int activationDepthLimit = 0;
-
+    final static Logger log = Logger.getLogger("Minecraft");
     final static int mainModule;
     final static int headNormal;
     final static int headFast;
@@ -153,29 +154,39 @@ final class Blueprint extends MovableBlueprint {
      * defined above must be detected manually.
      */
     public Machina detect(Player player, final BlockLocation anchor, final BlockFace leverFace, ItemStack itemInHand) {
-        if (leverFace != BlockFace.UP)
+   // 	log.info("blueprint detected");
+        if (leverFace != BlockFace.UP){
+     //   	log.info("detect 1");
+            return null;}
+        if (!anchor.checkType(anchorMaterial)){
+     //   	log.info("detect 2");
             return null;
-
-        if (!anchor.checkType(anchorMaterial))
-            return null;
-
+        }
         BlockLocation centralBase = anchor.getRelative(BlockFace.DOWN);
         List<Integer> detectedModules = new ArrayList<Integer>(2);
         Drill drill = null;
         if (centralBase.checkType(baseMaterial)) {
+     //   	log.info("detect 4");
             // Check if the drill is on solid ground.
             if (!BlockData.isSolid(centralBase.getRelative(BlockFace.DOWN).getTypeId()))
+            {
+       //     	log.info("detect 3");
                 return null;
-
+            }
             // Search for a furnace around the central base.
             for (BlockRotation i : BlockRotation.values()) {
                 if (!centralBase.getRelative(i.getYawFace()).checkType(furnaceMaterial))
-                    continue;
-
+                {
+           //     	log.info("detect 5");
+                	continue;
+                }
                 BlockRotation yaw = i.getOpposite();
                 if (!detectOther(anchor, yaw, mainModule))
+                {
+            //    	log.info("detect 6");
                     continue;
-
+                }
+          //      log.info("detect 7");
                 detectedModules.add(mainModule);
                 if (detectOther(anchor, yaw, headNormal)) {
                     detectedModules.add(headNormal);
@@ -204,6 +215,7 @@ final class Blueprint extends MovableBlueprint {
                     return null;
 
                 // Detection was a success.
+           //    	log.info("drill Found!");
                 drill = new Drill(this, detectedModules, yaw, player, anchor, chest, head, furnace);
                 if (drill != null && itemInHand != null && itemInHand.getType() == rotateMaterial) {
                     // Support for rotation on a non-activated drill
@@ -214,6 +226,7 @@ final class Blueprint extends MovableBlueprint {
                 break;
             }
         } else {
+        //	log.info("detect base material fail");
             final int headModule;
             if (centralBase.checkType(headMaterialNormal)) {
                 headModule = verticalHeadNormal;

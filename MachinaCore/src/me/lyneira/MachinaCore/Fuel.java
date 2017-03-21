@@ -52,7 +52,7 @@ public class Fuel {
         burnTimes.put(Material.CHEST.getId(), woodTime);
         burnTimes.put(Material.JUKEBOX.getId(), woodTime);
         burnTimes.put(Material.NOTE_BLOCK.getId(), woodTime);
-        burnTimes.put(Material.LOCKED_CHEST.getId(), woodTime);
+     //   burnTimes.put(Material.LOCKED_CHEST.getId(), woodTime);
         burnTimes.put(Material.FENCE_GATE.getId(), woodTime);
         burnTimes.put(Material.WOOD_DOUBLE_STEP.getId(), woodTime);
         burnTimes.put(Material.WOOD_STEP.getId(), woodTime / 2);
@@ -107,7 +107,7 @@ public class Fuel {
         case CHEST:
         case JUKEBOX:
         case NOTE_BLOCK:
-        case LOCKED_CHEST:
+       // case LOCKED_CHEST:
         case FENCE_GATE:
             return woodTime;
 
